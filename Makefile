@@ -1,0 +1,88 @@
+.PHONY: all format format-check lint typecheck test tests integration_tests help run dev desktop install-desktop install-checkout
+
+# Default target executed when no arguments are given to make.
+all: help
+
+######################
+# DEVELOPMENT
+######################
+
+dev:
+	uv run langgraph dev
+
+run:
+	uv run uvicorn agent.webapp:app --reload --port 8000
+
+desktop:
+	pnpm run dev:desktop
+
+install-desktop:
+	@test -z "$$(git status --porcelain)" || { echo 'Commit or stash repository changes first.' >&2; exit 1; }
+	@git switch main
+	@git pull --ff-only origin main
+	@./scripts/install_desktop.sh
+
+install-checkout:
+	@./scripts/install_desktop.sh
+
+install:
+	uv sync --extra dev
+
+######################
+# TESTING
+######################
+
+TEST_FILE ?= tests/
+
+test tests:
+	@if [ -d "$(TEST_FILE)" ] || [ -f "$(TEST_FILE)" ]; then \
+		uv run pytest -vvv $(TEST_FILE); \
+	else \
+		echo "Skipping tests: path not found: $(TEST_FILE)"; \
+	fi
+
+integration_tests:
+	@if [ -d "tests/integration_tests/" ] || [ -f "tests/integration_tests/" ]; then \
+		uv run pytest -vvv tests/integration_tests/; \
+	else \
+		echo "Skipping integration tests: path not found: tests/integration_tests/"; \
+	fi
+
+######################
+# LINTING AND FORMATTING
+######################
+
+PYTHON_FILES=.
+
+lint:
+	uv run ruff check $(PYTHON_FILES)
+	uv run ruff format $(PYTHON_FILES) --diff
+
+format:
+	uv run ruff format $(PYTHON_FILES)
+	uv run ruff check --fix $(PYTHON_FILES)
+
+format-check:
+	uv run ruff format $(PYTHON_FILES) --check
+
+typecheck:
+	npx --yes basedpyright agent tests
+
+######################
+# HELP
+######################
+
+help:
+	@echo '----'
+	@echo 'dev                          - run LangGraph dev server'
+	@echo 'run                          - run webhook server'
+	@echo 'desktop                      - run the backend and Electron desktop app'
+	@echo 'install-desktop              - install or update Open SWE Desktop on macOS'
+	@echo 'install-checkout             - install the current checkout of Open SWE Desktop on macOS'
+	@echo 'install                      - install dependencies (incl. dev extras)'
+	@echo 'format                       - run code formatters'
+	@echo 'lint                         - run linters'
+	@echo 'typecheck                    - run basedpyright on agent/ and tests/'
+	@echo 'test                         - run unit tests'
+	@echo 'integration_tests            - run integration tests'
+	@echo '----'

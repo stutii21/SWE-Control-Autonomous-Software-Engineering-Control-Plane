@@ -1,0 +1,158 @@
+# SWE-Forge CI.
+#
+# Runs with NO credentials: no model API keys, no sandbox provider, no GitHub
+# App, no MCP server, no LangSmith. Everything here is deterministic and local,
+# which is what makes it safe to run on every pull request.
+#
+# Live-model evaluation is deliberately a separate, manually triggered workflow
+# (see sweforge-live.yml) because it costs money and needs secrets.
+name: SWE-Forge
+
+on:
+  push:
+    paths:
+      - "agent/sweforge/**"
+      - "evaluation/**"
+      - "tests_sweforge/**"
+      - ".github/workflows/sweforge.yml"
+  pull_request:
+    paths:
+      - "agent/sweforge/**"
+      - "evaluation/**"
+      - "tests_sweforge/**"
+  workflow_dispatch:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install SWE-Forge dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "langgraph>=1.2.10" "langchain>=1.3.9" "langchain-core>=1.6.0" \
+                      "pydantic>=2.9" "langsmith>=0.11.1" pytest ruff mypy
+
+      - name: Lint
+        run: python -m ruff check agent/sweforge evaluation tests_sweforge
+
+      - name: Format check
+        run: python -m ruff format --check agent/sweforge evaluation tests_sweforge
+
+      - name: Type check (supported modules)
+        run: |
+          python -m mypy --ignore-missing-imports --no-strict-optional \
+            --explicit-package-bases \
+            agent/sweforge/budget.py \
+            agent/sweforge/tools/errors.py \
+            agent/sweforge/mcp/orchestration.py \
+            agent/sweforge/routing/execution_policy.py \
+            agent/sweforge/routing/model_router.py \
+            agent/sweforge/schemas.py \
+            agent/sweforge/observability/trace.py
+
+      - name: Unit and integration tests
+        env:
+          # Fixture-only execution: SWE-Forge's own checked-in test repositories.
+          SWEFORGE_ALLOW_LOCAL_EXEC: "1"
+        run: python -m pytest -c pytest-sweforge.ini
+
+      - name: Import isolation (must not require upstream heavy deps)
+        run: |
+          python - <<'PY'
+          import importlib, pkgutil, sys
+          blocked = {"fastapi", "deepagents"}
+          class Blocker:
+              def find_module(self, name, path=None):
+                  return self if name.split(".")[0] in blocked else None
+              def load_module(self, name):
+                  raise ImportError(f"blocked: {name}")
+          sys.meta_path.insert(0, Blocker())
+          import agent.sweforge as sf
+          failures = []
+          for mod in [m.name for m in pkgutil.walk_packages(sf.__path__, "agent.sweforge.")]:
+              try:
+                  importlib.import_module(mod)
+              except Exception as exc:
+                  failures.append((mod, str(exc)))
+          assert not failures, f"modules requiring upstream deps: {failures}"
+          print("import isolation OK")
+          PY
+
+      - name: Secret scan
+        run: |
+          python - <<'PY'
+          import pathlib, re, sys
+          patterns = {
+              "aws": re.compile(r"AKIA[0-9A-Z]{16}"),
+              "anthropic": re.compile(r"sk-ant-[A-Za-z0-9_\-]{20,}"),
+              "openai": re.compile(r"sk-(?:proj-)?[A-Za-z0-9]{32,}"),
+              "github": re.compile(r"gh[pousr]_[A-Za-z0-9]{30,}"),
+              "slack": re.compile(r"xox[abprs]-[A-Za-z0-9\-]{10,}"),
+              "langsmith": re.compile(r"lsv2_[a-z]{2}_[A-Za-z0-9]{20,}"),
+              "assigned": re.compile(
+                  r"(?i)\b(api_key|secret|password|token)\b\s*[:=]\s*['\"][A-Za-z0-9_\-]{16,}['\"]"
+              ),
+          }
+          hits = []
+          for root in ("agent/sweforge", "evaluation", "tests_sweforge"):
+              for path in pathlib.Path(root).rglob("*"):
+                  if not path.is_file() or path.suffix not in {".py", ".json", ".jsonl", ".md", ".yml"}:
+                      continue
+                  text = path.read_text(errors="replace")
+                  for name, pattern in patterns.items():
+                      for match in pattern.finditer(text):
+                          hits.append(f"{name} {path}:{text.count(chr(10), 0, match.start()) + 1}")
+          if hits:
+              print("\n".join(hits))
+              sys.exit(1)
+          print("secret scan clean")
+          PY
+
+      - name: Documentation consistency (numbers must match source)
+        env:
+          SWEFORGE_ALLOW_LOCAL_EXEC: "1"
+        run: python -m evaluation.check_docs
+
+      - name: Graph registration resolves
+        run: |
+          python -c "
+          from agent.sweforge.graph.entrypoint import describe_graph
+          info = describe_graph()
+          assert info['node_count'] >= 15, info
+          print('graph registered and compiles:', info['node_count'], 'nodes')
+          "
+
+      - name: Deterministic evaluation smoke test
+        env:
+          SWEFORGE_ALLOW_LOCAL_EXEC: "1"
+        run: |
+          python -m evaluation.runner --variants A_baseline E_full \
+            --scenarios inventory_boundary_recovery pipeline_secret_risk_gate
+          python -m evaluation.evaluator
+
+      - name: Benchmark dry-run (nothing downloaded or executed)
+        run: |
+          python -c "
+          from evaluation.benchmarks import load_tasks, dry_run
+          tasks = load_tasks('evaluation/benchmarks/example_swebench_lite.jsonl')
+          result = dry_run(tasks)
+          assert result['executed'] is False
+          print('benchmark dry-run OK:', result['tasks_parsed'], 'task(s) parsed')
+          "
+
+      - name: Upload evaluation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sweforge-evaluation
+          path: |
+            evaluation/reports/
+            evaluation/artifacts/
+          if-no-files-found: ignore

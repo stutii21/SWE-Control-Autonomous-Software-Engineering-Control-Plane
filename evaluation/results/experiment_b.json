@@ -1,0 +1,410 @@
+{
+  "experiment": "B_system_baseline",
+  "question": "Does SWE-Forge improve on the actual Open SWE system?",
+  "generated_at": "2026-08-25T22:04:39Z",
+  "duration_seconds": 15.6512,
+  "baseline_availability": {
+    "baseline": "open_swe_upstream",
+    "can_run": false,
+    "reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)",
+    "details": {
+      "modules_present": {
+        "fastapi": false,
+        "deepagents": false,
+        "langchain": true,
+        "langgraph": true
+      },
+      "missing_modules": [
+        "deepagents",
+        "fastapi"
+      ],
+      "upstream_symbol_importable": false,
+      "import_error": "skipped: prerequisite modules missing",
+      "model_credentials_present": false,
+      "sandbox_credentials_present": false,
+      "can_run": false,
+      "reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)"
+    }
+  },
+  "comparable_pairs": 0,
+  "notes": [
+    "The baseline side invokes the real upstream agent.server.get_agent path.",
+    "When upstream cannot execute, the pair is reported UNAVAILABLE with the precise missing dependency or credential. No baseline result is synthesised.",
+    "A head-to-head verdict requires comparable_pairs > 0.",
+    "comparable_pairs == 0: NO head-to-head conclusion may be drawn from this run."
+  ],
+  "records": [
+    {
+      "scenario_id": "billing_validation_first_try",
+      "task": "invoice_total should reject a negative subtotal by raising ValueError instead of silently returning a negative invoice.",
+      "open_swe": {
+        "available": false,
+        "status": "unavailable",
+        "unavailable_reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)",
+        "preflight": {
+          "modules_present": {
+            "fastapi": false,
+            "deepagents": false,
+            "langchain": true,
+            "langgraph": true
+          },
+          "missing_modules": [
+            "deepagents",
+            "fastapi"
+          ],
+          "upstream_symbol_importable": false,
+          "import_error": "skipped: prerequisite modules missing",
+          "model_credentials_present": false,
+          "sandbox_credentials_present": false,
+          "can_run": false,
+          "reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)"
+        },
+        "metrics": {},
+        "upstream_invoked": false,
+        "wall_time_seconds": 0.0
+      },
+      "sweforge": {
+        "available": true,
+        "status": "completed",
+        "metrics": {
+          "variant": "full",
+          "final_status": "completed",
+          "verification_passed": true,
+          "first_attempt_success": true,
+          "recovery_attempts": 0,
+          "recovered": false,
+          "tests_run": 2,
+          "tests_passed": 2,
+          "tests_failed": 0,
+          "model_calls": 4,
+          "tool_calls": 25,
+          "input_tokens": 1248,
+          "output_tokens": 309,
+          "estimated_cost_usd": 0.027399,
+          "verification_runs": 1,
+          "review_approved": true,
+          "review_rejections": 0,
+          "risk_level": "LOW",
+          "risk_score": 0,
+          "security_gate_triggered": false,
+          "security_findings": 0,
+          "wall_time_seconds": 2.8953,
+          "node_count": 12
+        },
+        "wall_time_seconds": 2.9372,
+        "model_mode": "scripted-deterministic"
+      },
+      "comparable": false
+    },
+    {
+      "scenario_id": "inventory_boundary_recovery",
+      "task": "restock_needed must treat the threshold as inclusive: an item whose quantity equals the threshold still needs restocking.",
+      "open_swe": {
+        "available": false,
+        "status": "unavailable",
+        "unavailable_reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)",
+        "preflight": {
+          "modules_present": {
+            "fastapi": false,
+            "deepagents": false,
+            "langchain": true,
+            "langgraph": true
+          },
+          "missing_modules": [
+            "deepagents",
+            "fastapi"
+          ],
+          "upstream_symbol_importable": false,
+          "import_error": "skipped: prerequisite modules missing",
+          "model_credentials_present": false,
+          "sandbox_credentials_present": false,
+          "can_run": false,
+          "reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)"
+        },
+        "metrics": {},
+        "upstream_invoked": false,
+        "wall_time_seconds": 0.0
+      },
+      "sweforge": {
+        "available": true,
+        "status": "completed",
+        "metrics": {
+          "variant": "full",
+          "final_status": "completed",
+          "verification_passed": true,
+          "first_attempt_success": false,
+          "recovery_attempts": 1,
+          "recovered": true,
+          "tests_run": 2,
+          "tests_passed": 2,
+          "tests_failed": 0,
+          "model_calls": 5,
+          "tool_calls": 29,
+          "input_tokens": 1980,
+          "output_tokens": 475,
+          "estimated_cost_usd": 0.031809,
+          "verification_runs": 2,
+          "review_approved": true,
+          "review_rejections": 0,
+          "risk_level": "LOW",
+          "risk_score": 0,
+          "security_gate_triggered": false,
+          "security_findings": 0,
+          "wall_time_seconds": 2.3551,
+          "node_count": 15
+        },
+        "wall_time_seconds": 2.3856,
+        "model_mode": "scripted-deterministic"
+      },
+      "comparable": false
+    },
+    {
+      "scenario_id": "textutil_syntax_recovery",
+      "task": "slugify should collapse runs of whitespace into a single hyphen.",
+      "open_swe": {
+        "available": false,
+        "status": "unavailable",
+        "unavailable_reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)",
+        "preflight": {
+          "modules_present": {
+            "fastapi": false,
+            "deepagents": false,
+            "langchain": true,
+            "langgraph": true
+          },
+          "missing_modules": [
+            "deepagents",
+            "fastapi"
+          ],
+          "upstream_symbol_importable": false,
+          "import_error": "skipped: prerequisite modules missing",
+          "model_credentials_present": false,
+          "sandbox_credentials_present": false,
+          "can_run": false,
+          "reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)"
+        },
+        "metrics": {},
+        "upstream_invoked": false,
+        "wall_time_seconds": 0.0
+      },
+      "sweforge": {
+        "available": true,
+        "status": "completed",
+        "metrics": {
+          "variant": "full",
+          "final_status": "completed",
+          "verification_passed": true,
+          "first_attempt_success": false,
+          "recovery_attempts": 1,
+          "recovered": true,
+          "tests_run": 2,
+          "tests_passed": 2,
+          "tests_failed": 0,
+          "model_calls": 5,
+          "tool_calls": 29,
+          "input_tokens": 1982,
+          "output_tokens": 427,
+          "estimated_cost_usd": 0.030351,
+          "verification_runs": 2,
+          "review_approved": true,
+          "review_rejections": 0,
+          "risk_level": "LOW",
+          "risk_score": 0,
+          "security_gate_triggered": false,
+          "security_findings": 0,
+          "wall_time_seconds": 2.4059,
+          "node_count": 15
+        },
+        "wall_time_seconds": 2.4371,
+        "model_mode": "scripted-deterministic"
+      },
+      "comparable": false
+    },
+    {
+      "scenario_id": "inventory_recovery_exhausted",
+      "task": "restock_needed must treat the threshold as inclusive, but every repair attempt in this scenario is deliberately wrong.",
+      "open_swe": {
+        "available": false,
+        "status": "unavailable",
+        "unavailable_reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)",
+        "preflight": {
+          "modules_present": {
+            "fastapi": false,
+            "deepagents": false,
+            "langchain": true,
+            "langgraph": true
+          },
+          "missing_modules": [
+            "deepagents",
+            "fastapi"
+          ],
+          "upstream_symbol_importable": false,
+          "import_error": "skipped: prerequisite modules missing",
+          "model_credentials_present": false,
+          "sandbox_credentials_present": false,
+          "can_run": false,
+          "reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)"
+        },
+        "metrics": {},
+        "upstream_invoked": false,
+        "wall_time_seconds": 0.0
+      },
+      "sweforge": {
+        "available": true,
+        "status": "escalated_recovery_exhausted",
+        "metrics": {
+          "variant": "full",
+          "final_status": "escalated_recovery_exhausted",
+          "verification_passed": false,
+          "first_attempt_success": false,
+          "recovery_attempts": 3,
+          "recovered": false,
+          "tests_run": 2,
+          "tests_passed": 1,
+          "tests_failed": 1,
+          "model_calls": 6,
+          "tool_calls": 34,
+          "input_tokens": 3092,
+          "output_tokens": 767,
+          "estimated_cost_usd": 0.032697,
+          "verification_runs": 4,
+          "review_approved": null,
+          "review_rejections": 0,
+          "risk_level": null,
+          "risk_score": null,
+          "security_gate_triggered": false,
+          "security_findings": 0,
+          "wall_time_seconds": 4.5761,
+          "node_count": 19
+        },
+        "wall_time_seconds": 4.606,
+        "model_mode": "scripted-deterministic"
+      },
+      "comparable": false
+    },
+    {
+      "scenario_id": "billing_review_rejection",
+      "task": "Validate invoice_total inputs: reject a negative subtotal, a negative tax_rate, and a discount percentage outside 0-100.",
+      "open_swe": {
+        "available": false,
+        "status": "unavailable",
+        "unavailable_reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)",
+        "preflight": {
+          "modules_present": {
+            "fastapi": false,
+            "deepagents": false,
+            "langchain": true,
+            "langgraph": true
+          },
+          "missing_modules": [
+            "deepagents",
+            "fastapi"
+          ],
+          "upstream_symbol_importable": false,
+          "import_error": "skipped: prerequisite modules missing",
+          "model_credentials_present": false,
+          "sandbox_credentials_present": false,
+          "can_run": false,
+          "reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)"
+        },
+        "metrics": {},
+        "upstream_invoked": false,
+        "wall_time_seconds": 0.0
+      },
+      "sweforge": {
+        "available": true,
+        "status": "completed",
+        "metrics": {
+          "variant": "full",
+          "final_status": "completed",
+          "verification_passed": true,
+          "first_attempt_success": false,
+          "recovery_attempts": 1,
+          "recovered": true,
+          "tests_run": 2,
+          "tests_passed": 2,
+          "tests_failed": 0,
+          "model_calls": 6,
+          "tool_calls": 28,
+          "input_tokens": 2217,
+          "output_tokens": 695,
+          "estimated_cost_usd": 0.048132,
+          "verification_runs": 2,
+          "review_approved": true,
+          "review_rejections": 1,
+          "risk_level": "LOW",
+          "risk_score": 0,
+          "security_gate_triggered": false,
+          "security_findings": 0,
+          "wall_time_seconds": 2.1309,
+          "node_count": 15
+        },
+        "wall_time_seconds": 2.1612,
+        "model_mode": "scripted-deterministic"
+      },
+      "comparable": false
+    },
+    {
+      "scenario_id": "pipeline_secret_risk_gate",
+      "task": "Add a deploy token to the deployment helper and make CI also run on pull requests.",
+      "open_swe": {
+        "available": false,
+        "status": "unavailable",
+        "unavailable_reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)",
+        "preflight": {
+          "modules_present": {
+            "fastapi": false,
+            "deepagents": false,
+            "langchain": true,
+            "langgraph": true
+          },
+          "missing_modules": [
+            "deepagents",
+            "fastapi"
+          ],
+          "upstream_symbol_importable": false,
+          "import_error": "skipped: prerequisite modules missing",
+          "model_credentials_present": false,
+          "sandbox_credentials_present": false,
+          "can_run": false,
+          "reason": "missing Python modules: deepagents, fastapi; upstream agent factory not importable (skipped: prerequisite modules missing); no model provider credential set (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY); no sandbox provider credential set (DAYTONA_API_KEY / MODAL_TOKEN_ID / E2B_API_KEY / RUNLOOP_API_KEY)"
+        },
+        "metrics": {},
+        "upstream_invoked": false,
+        "wall_time_seconds": 0.0
+      },
+      "sweforge": {
+        "available": true,
+        "status": "awaiting_human_approval",
+        "metrics": {
+          "variant": "full",
+          "final_status": "awaiting_human_approval",
+          "verification_passed": true,
+          "first_attempt_success": true,
+          "recovery_attempts": 0,
+          "recovered": false,
+          "tests_run": 1,
+          "tests_passed": 1,
+          "tests_failed": 0,
+          "model_calls": 4,
+          "tool_calls": 25,
+          "input_tokens": 1216,
+          "output_tokens": 320,
+          "estimated_cost_usd": 0.027984,
+          "verification_runs": 1,
+          "review_approved": true,
+          "review_rejections": 0,
+          "risk_level": "HIGH",
+          "risk_score": 90,
+          "security_gate_triggered": true,
+          "security_findings": 1,
+          "wall_time_seconds": 1.0546,
+          "node_count": 12
+        },
+        "wall_time_seconds": 1.0837,
+        "model_mode": "scripted-deterministic"
+      },
+      "comparable": false
+    }
+  ]
+}

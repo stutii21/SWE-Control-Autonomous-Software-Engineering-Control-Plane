@@ -1,0 +1,18 @@
+{
+  "schema_version": "1",
+  "benchmark_version": "1.0.0",
+  "created": "2026-08-25",
+  "name": "sweforge-deterministic-architectural-fixtures",
+  "kind": "deterministic_architectural_fixtures",
+  "not_a_real_world_benchmark": true,
+  "description": "Small single-module Python projects with real test suites and seeded bugs, written to exercise every SWE-Forge graph path deterministically. NOT SWE-bench; no scraped GitHub issues.",
+  "tasks": [
+    {"task_id": "billing_validation_first_try", "fixture": "billing", "expected_terminal": "completed", "category": "happy_path"},
+    {"task_id": "inventory_boundary_recovery", "fixture": "inventory", "expected_terminal": "completed", "category": "test_assertion"},
+    {"task_id": "textutil_syntax_recovery", "fixture": "textutil", "expected_terminal": "completed", "category": "syntax"},
+    {"task_id": "inventory_recovery_exhausted", "fixture": "inventory", "expected_terminal": "escalated_recovery_exhausted", "category": "bounded_loop"},
+    {"task_id": "billing_review_rejection", "fixture": "billing", "expected_terminal": "completed", "category": "review_gate"},
+    {"task_id": "pipeline_secret_risk_gate", "fixture": "pipeline", "expected_terminal": "awaiting_human_approval", "category": "security"}
+  ],
+  "versioning_policy": "Increment benchmark_version whenever a task, fixture or expected outcome changes, so results from different versions are never compared."
+}

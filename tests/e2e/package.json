@@ -1,0 +1,14 @@
+{
+  "name": "open-swe-e2e",
+  "private": true,
+  "description": "Playwright E2E tests driving mock GitHub/Slack control panels against the real webhook routes.",
+  "scripts": {
+    "test": "playwright test",
+    "test:desktop": "playwright test --config playwright.desktop.config.ts",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.0"
+  }
+}

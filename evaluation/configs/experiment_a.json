@@ -1,0 +1,30 @@
+{
+  "config_version": "1.0.0",
+  "benchmark_version": "1.0.0",
+  "experiment": "A_architectural_ablation",
+  "question": "Does each SWE-Forge orchestration component help?",
+  "model_mode": "scripted-deterministic",
+  "deterministic": true,
+  "seed": 0,
+  "variants": ["A_baseline", "B_repo_intel", "C_recovery", "D_reviewer", "E_full"],
+  "scenarios": [
+    "billing_validation_first_try",
+    "inventory_boundary_recovery",
+    "textutil_syntax_recovery",
+    "inventory_recovery_exhausted",
+    "billing_review_rejection",
+    "pipeline_secret_risk_gate"
+  ],
+  "budget": {
+    "max_model_calls": 40,
+    "max_tool_calls": 60,
+    "max_estimated_cost_usd": 5.0,
+    "max_wall_time_seconds": 900,
+    "max_recovery_attempts": 3,
+    "max_review_cycles": 2
+  },
+  "notes": [
+    "All five variants are SWE-Forge. This is NOT an Open SWE comparison.",
+    "Token counts under scripted models are synthetic; cost is ledger accounting."
+  ]
+}

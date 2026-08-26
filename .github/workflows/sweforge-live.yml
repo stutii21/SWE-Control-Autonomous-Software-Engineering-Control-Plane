@@ -1,0 +1,58 @@
+# SWE-Forge live-model evaluation — MANUAL ONLY.
+#
+# Separated from the main CI because it requires paid model credentials. It is
+# never triggered by push or pull_request, so a fork PR cannot spend money or
+# reach secrets.
+name: SWE-Forge Live Evaluation
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Model id (e.g. claude-sonnet-4-5)"
+        required: true
+      max_cost_usd:
+        description: "Hard spend ceiling for the run"
+        required: true
+        default: "2.00"
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: live-evaluation  # requires explicit approval
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          pip install "langgraph>=1.2.10" "langchain>=1.3.9" "pydantic>=2.9" \
+                      "langsmith>=0.11.1" langchain-anthropic pytest
+      - name: Report availability (fails clearly if unconfigured)
+        env:
+          SWEFORGE_EVAL_PROVIDER: anthropic
+          SWEFORGE_EVAL_MODEL: ${{ inputs.model }}
+          SWEFORGE_EVAL_MAX_COST_USD: ${{ inputs.max_cost_usd }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python -c "
+          from evaluation.live import describe_live_availability
+          info = describe_live_availability()
+          print(info)
+          if not info['available']:
+              raise SystemExit('LIVE_EVALUATION_UNAVAILABLE: ' + info['reason'])
+          "
+      - name: Run paired live evaluation
+        env:
+          SWEFORGE_EVAL_PROVIDER: anthropic
+          SWEFORGE_EVAL_MODEL: ${{ inputs.model }}
+          SWEFORGE_EVAL_MAX_COST_USD: ${{ inputs.max_cost_usd }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SWEFORGE_ALLOW_LOCAL_EXEC: "1"
+        run: python -m evaluation.experiment_b --model "${{ inputs.model }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-evaluation-results
+          path: evaluation/results/

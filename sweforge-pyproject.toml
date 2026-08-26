@@ -1,0 +1,51 @@
+# SWE-Forge standalone packaging metadata.
+#
+# SWE-Forge normally lives as an overlay inside an Open SWE checkout, and that
+# mode is unchanged. This file additionally makes the SWE-Forge layer installable
+# as an identifiable package for development and CI:
+#
+#     pip install -e . -f sweforge-pyproject.toml     # see docs/INSTALL_SWEFORGE.md
+#
+# It deliberately does NOT package or vendor Open SWE. Upstream is declared as an
+# optional integration requirement: the SWE-Forge core (graph, agents, tools,
+# evaluation, tests) runs without it, and only the Open SWE baseline adapter and
+# sandbox backend need upstream present.
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sweforge"
+version = "0.25.0"
+description = "Adaptive, self-verifying autonomous software engineering control plane built on Open SWE"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+# Core runtime. Pinned to ranges compatible with upstream Open SWE's own pins so
+# installing SWE-Forge into an Open SWE checkout cannot force a downgrade.
+dependencies = [
+    "langgraph>=1.2.10",
+    "langchain>=1.3.9",
+    "langchain-core>=1.6.0",
+    "pydantic>=2.9",
+    "langsmith>=0.11.1",
+]
+
+[project.optional-dependencies]
+# Everything needed to run the test suite and quality gates. No API keys.
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.10"]
+# Only required to exercise the Open SWE baseline adapter against real upstream.
+openswe = ["fastapi", "deepagents==0.7.6"]
+# Only required for the live-model evaluation track.
+live = ["langchain-anthropic", "langchain-openai"]
+
+[project.scripts]
+sweforge = "agent.sweforge.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["agent.sweforge*", "evaluation*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
